@@ -2,22 +2,23 @@ package com.example.service.impl;
 
 import java.beans.PropertyDescriptor;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.example.common.ServiceResult;
 import com.example.dto.request.AlbumRequest.InnerAlbumRequest;
 import com.example.dto.request.AlbumRequest.UpdateAlbumRequest;
-import com.example.dto.response.AlbumResponse.InnerAlbumResponse;
-import com.example.dto.response.UserResponse.UserIdResponse;
+import com.example.dto.response.AlbumResponse.GetInitResponse;
 import com.example.entity.AlbumEntity;
 import com.example.enums.ResultCode;
 import com.example.exception.BusinessException;
@@ -109,6 +110,20 @@ public class AlbumServiceImpl implements AlbumService {
             throw new BusinessException(ResultCode.ALBUM_NAME_EXISTS); // 需要定義對應的錯誤碼
         }
         return userId;
+    }
+
+    @Override
+    public ServiceResult<List<GetInitResponse>> getInit() {
+        // 獲取用戶Id
+        UserDetails userDetails = this.userUtils.getUserDetails();
+        String username = userDetails.getUsername();
+        String userId = this.userRepository.findIdByUsername(username);
+        List<GetInitResponse> getInitResponse = this.albumRepository.findGetInit(userId);
+        // 空值檢測
+        if (CollectionUtils.isEmpty(getInitResponse)) {
+            return ServiceResult.success(Collections.emptyList());
+        }
+        return ServiceResult.success(getInitResponse);
     }
 
 }

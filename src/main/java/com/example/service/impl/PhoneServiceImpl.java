@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -16,12 +17,11 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.common.ServiceResult;
-import com.example.dto.request.PhoneRequest;
+import com.example.dto.response.PhoneResponse.InnerPhoneResponse;
 import com.example.entity.AlbumEntity;
 import com.example.entity.PhotoEntity;
 import com.example.enums.ResultCode;
@@ -29,9 +29,7 @@ import com.example.exception.BusinessException;
 import com.example.repository.AlbumRepository;
 import com.example.repository.PhoneRepository;
 import com.example.service.PhoneService;
-import com.example.util.ImageUtils;
 import com.example.util.UserUtils;
-import com.example.util.ImageUtils.ImageInfo;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -55,9 +53,13 @@ public class PhoneServiceImpl implements PhoneService {
     private final UserUtils userUtils;
 
     @Override
-    public void getInit() {
-        System.out.println("11111111111171111111111111" + SecurityContextHolder.getContext().getAuthentication());
-
+    public ServiceResult<List<InnerPhoneResponse>> getInit() {
+        String userId = this.userUtils.getUserId();
+        List<InnerPhoneResponse> innerPhoneResponses = this.photoRepository.findByUserId(userId);
+        if (CollectionUtils.isEmpty(innerPhoneResponses)) {
+            return ServiceResult.success(Collections.emptyList());
+        }
+        return ServiceResult.success(innerPhoneResponses);
     }
 
     @Override

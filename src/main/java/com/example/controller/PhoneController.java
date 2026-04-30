@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.common.ServiceResult;
 import com.example.dto.request.PhoneRequest;
+import com.example.dto.response.PhoneResponse.InnerPhoneResponse;
 import com.example.service.PhoneService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,9 +36,9 @@ public class PhoneController {
         return this.phoneService.insertPhone(files);
     }
 
-    @GetMapping("/getInit")
-    @Operation(summary = "獲取當前用戶相冊")
-    public void getInit() {
-        this.phoneService.getInit();
+    @GetMapping("/getPhoneInit")
+    @Operation(summary = "獲取當前用戶相冊詳情")
+    public ServiceResult<List<InnerPhoneResponse>> getInit() {
+        return this.phoneService.getInit();
     }
 }

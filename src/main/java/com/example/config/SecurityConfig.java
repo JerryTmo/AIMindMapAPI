@@ -48,7 +48,8 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 // 其他可能的 Swagger 路徑
                                 "/api-docs",
-                                "/api-docs/**")
+                                "/api-docs/**",
+                                "/uploads/**")
                         .permitAll()
 
                         // ===== 放行認證相關路徑 =====
